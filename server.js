@@ -2,6 +2,11 @@ import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // It's a quick hack to import characters if we need server-side random validation,
 // but to keep server simple, we'll just track ID and Role picking.
@@ -10,9 +15,12 @@ import cors from "cors";
 const app = express();
 app.use(cors());
 
+// Serve static files from the React app build
+app.use(express.static(path.join(__dirname, "dist")));
+
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
-  cors: { origin: "*", methods: ["GET", "POST"] } // Allow vite frontend
+  cors: { origin: "*", methods: ["GET", "POST"] } // Allow any origin in production to simplify setup
 });
 
 // Game State
@@ -126,7 +134,12 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = 3001;
+// Catch-all to serve index.html for React SPA
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
+
+const PORT = process.env.PORT || 3001;
 httpServer.listen(PORT, () => {
-  console.log(`Socket.io server listening on http://localhost:${PORT}`);
+  console.log(`One Piece Game running on port ${PORT}`);
 });
