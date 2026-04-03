@@ -135,7 +135,7 @@ io.on("connection", (socket) => {
 });
 
 // Catch-all to serve index.html for React SPA
-app.get("*", (req, res) => {
+app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
