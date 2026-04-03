@@ -134,8 +134,8 @@ io.on("connection", (socket) => {
   });
 });
 
-// Catch-all to serve index.html for React SPA (Official Express 5 Wildcard)
-app.get("/:path*", (req, res) => {
+// Catch-all to serve index.html for React SPA (Express 5 Native RegExp)
+app.get(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
